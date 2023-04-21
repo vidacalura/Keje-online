@@ -25,6 +25,7 @@ func main() {
 	{
 		jogo.GET("/:idSala", jogoHandler)
 		jogo.GET("/analise/:codJogo", jogoHandler)
+		jogo.POST("/", jogoHandler)
 	}
 
 	users := r.Group("/api/usuarios")
@@ -43,6 +44,7 @@ func main() {
 func jogoHandler(c *gin.Context) {
 	reqUrl, err := url.Parse(os.Getenv("JogoMS"))
 	if err != nil {
+		log.Println(err)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{ "error": "Erro ao conectar com o servidor. Tente novamente mais tarde." })
 		return
 	}

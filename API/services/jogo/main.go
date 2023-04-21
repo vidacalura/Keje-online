@@ -102,12 +102,13 @@ func criarSala(c *gin.Context) {
 
 	jogador1.Lado = sortearLado()
 
-	for _, sala := range salas {
+	for i, sala := range salas {
 		if sala.Id == 0 {
-			sala.Id = gerarCodigoSala()
-			sala.Jogadores[0] = jogador1
+			salas[i].Id = gerarCodigoSala()
+			salas[i].Jogadores[0] = jogador1
+			salas[i].Jogo.Turno = 'B'
 
-			c.IndentedJSON(http.StatusOK, gin.H{ "sala": sala, "message": "Sala criada com sucesso!" })
+			c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "Sala criada com sucesso!" })
 			return
 		}
 	}  
