@@ -45,7 +45,7 @@ type Movimento struct {
 }
 
 var db *sql.DB
-var salas [100]Sala
+var salas [256]Sala
 
 func main() {
 	//db = utils.ConectarBD()
@@ -60,6 +60,7 @@ func main() {
 		jogo.POST("/salas", criarSala)
 		jogo.POST("/salas/entrar", entrarSala)
 		jogo.POST("/", fazerMovimento)
+		jogo.POST("/desistir", desistir)
 	}
 
 	r.Run(os.Getenv("JogoMS"))
@@ -145,7 +146,7 @@ func entrarSala(c *gin.Context) {
 				return
 			}
 
-			c.IndentedJSON(http.StatusOK, gin.H{ "message": "Você entrou na sala com sucesso!" })
+			c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "Você entrou na sala com sucesso!" })
 			return
 		}
 	}  
@@ -173,13 +174,26 @@ func fazerMovimento(c *gin.Context) {
 			// Checar se é vez do usuário
 
 			// Validação de movimento
-			if isConnected(reqBody.Movimentos, sala.Jogo.Tabuleiro) {
+			if isConnected(reqBody.Movimentos, sala.Jogo.Tabuleiro) && !sala.JogoEncerrado {
 				for _, movimento := range reqBody.Movimentos {
 					salas[i].Jogo.Tabuleiro[movimento.Y][movimento.X] = movimento.Lado
 				}
 
 				// Validar se jogo acabou
-				
+				countCasas := countCasas(salas[i].Jogo.Tabuleiro)
+				if countCasas == 24 {
+					salas[i].JogoEncerrado = true
+					// Jogador ganha
+
+					c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "" })
+					return
+				} else if countCasas == 25 {
+					salas[i].JogoEncerrado = true
+					// Jogador perde
+
+					c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "" })
+					return
+				}
 
 				// Passar vez
 				if salas[i].Jogo.Turno == "B" {
@@ -282,11 +296,11 @@ func countCasas(tabuleiro [5][5]string) int {
 
 func restartJogo(sala *Sala) {
 	if sala.Jogadores[0].Lado == "B" {
-		sala.Jogadores[0].Lado == "P"
-		sala.Jogadores[1].Lado == "B"
+		sala.Jogadores[0].Lado = "P"
+		sala.Jogadores[1].Lado = "B"
 	} else {
-		sala.Jogadores[0].Lado == "B"
-		sala.Jogadores[1].Lado == "P"
+		sala.Jogadores[0].Lado = "B"
+		sala.Jogadores[1].Lado = "P"
 	}
 
 	sala.Jogadores[0].Tempo = 180
