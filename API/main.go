@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"os"
 
-	//"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -20,11 +20,19 @@ func main() {
 	}
 
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+        AllowMethods:     []string{"PUT", "GET", "POST", "DELETE"},
+        AllowHeaders: 	  []string{"*"},
+        AllowCredentials: true,
+	}))
 
 	jogo := r.Group("/api/jogo")
 	{
 		jogo.GET("/:idSala", jogoHandler)
 		jogo.GET("/analise/:codJogo", jogoHandler)
+		jogo.POST("/salas", jogoHandler)
+		jogo.POST("/salas/entrar", jogoHandler)
 		jogo.POST("/", jogoHandler)
 	}
 
@@ -76,3 +84,9 @@ func redirecionarRequest(reqUrl *url.URL, c *gin.Context) {
 	proxy := httputil.NewSingleHostReverseProxy(reqUrl)
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
+
+/* TODO
+- Docs
+- DB
+- Tokens
+*/
