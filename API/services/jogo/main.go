@@ -61,6 +61,8 @@ func main() {
 		jogo.POST("/salas/entrar", entrarSala)
 		jogo.POST("/", fazerMovimento)
 		jogo.POST("/desistir", desistir)
+		//jogo.POST("/restart", restartJogo)
+		//jogo.DELETE("/salas", fecharSala)
 	}
 
 	r.Run(os.Getenv("JogoMS"))
@@ -171,7 +173,20 @@ func fazerMovimento(c *gin.Context) {
 	for i, sala := range salas {
 		if reqBody.SalaId == sala.Id {
 			// Validação de usuário
-			// Checar se é vez do usuário
+			if reqBody.SocketId == sala.Jogadores[0].SocketId {
+				if sala.Jogadores[0].Lado != sala.Jogo.Turno {
+					c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Movimento inválido." })
+					return
+				}
+			} else if reqBody.SocketId == sala.Jogadores[1].SocketId {
+				if sala.Jogadores[1].Lado != sala.Jogo.Turno {
+					c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Movimento inválido." })
+					return
+				}
+			} else {
+				c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Erro ao realizar movimento. Id de sala ou socket inválido." })
+				return
+			}
 
 			// Validação de movimento
 			if isConnected(reqBody.Movimentos, sala.Jogo.Tabuleiro) && !sala.JogoEncerrado {
@@ -183,15 +198,25 @@ func fazerMovimento(c *gin.Context) {
 				countCasas := countCasas(salas[i].Jogo.Tabuleiro)
 				if countCasas == 24 {
 					salas[i].JogoEncerrado = true
-					// Jogador ganha
 
-					c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "" })
+					if reqBody.SocketId == salas[i].Jogadores[0].SocketId {
+						salas[i].Jogadores[0].Pontos++
+					} else {
+						salas[i].Jogadores[1].Pontos++
+					}
+
+					c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "Movimento realizado com sucesso!" })
 					return
 				} else if countCasas == 25 {
 					salas[i].JogoEncerrado = true
-					// Jogador perde
 
-					c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "" })
+					if reqBody.SocketId == salas[i].Jogadores[0].SocketId {
+						salas[i].Jogadores[1].Pontos++
+					} else {
+						salas[i].Jogadores[0].Pontos++
+					}
+
+					c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "Movimento realizado com sucesso!" })
 					return
 				}
 
@@ -339,4 +364,42 @@ func sortearLado() string {
 	}
 
 	return "P"
+}
+
+func desistir(c *gin.Context) {
+	type ReqBody struct {
+		SalaId   int    `json:"salaId"`
+		SocketId string `json:"socketId"`
+	}
+
+	var reqBody ReqBody
+	if err := c.BindJSON(&reqBody); err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
+		return
+	}
+
+	for i, sala := range salas {
+		if sala.Id == reqBody.SalaId {
+			if reqBody.SocketId == sala.Jogadores[0].SocketId {
+				salas[i].JogoEncerrado = true
+				salas[i].Jogadores[1].Pontos++
+			} else if reqBody.SocketId == sala.Jogadores[1].SocketId {
+				salas[i].JogoEncerrado = true
+				salas[i].Jogadores[0].Pontos++
+			} else {
+				c.IndentedJSON(http.StatusNotFound, gin.H{ "error": "Dados insuficientes." })
+				return
+			}
+
+			c.IndentedJSON(http.StatusNotFound, gin.H{ "sala": salas[i], "message": "Partida encerrada com sucesso!" })
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{ "error": "Sala não encontrada." })
+}
+
+func fecharSala() {
+
 }

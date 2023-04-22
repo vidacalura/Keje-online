@@ -516,6 +516,10 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.flex {
+  display: flex;
+}
+
 .hidden {
   display: none;
 }
@@ -524,8 +528,27 @@ video {
   justify-content: center;
 }
 
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .pt-12 {
   padding-top: 3rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 * {
@@ -574,15 +597,12 @@ body {
 }
 
 #btns-jogo-div {
-  display: flex;
-  justify-content: center;
   gap: 1rem;
   padding-top: 1.5rem;
 }
 
 @media (min-width: 768px) {
   #btns-jogo-div {
-    display: block;
     padding-top: 24vh;
     padding-left: 10vw;
   }

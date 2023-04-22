@@ -3,6 +3,7 @@ import { Jogador, Movimento } from '../jogo.js';
 const tabuleiroContainer = document.getElementById("tabuleiro-div");
 const terminarVezBtn = document.getElementById("terminar-vez-btn");
 const desistirBtn = document.getElementById("desistir-btn");
+const restartBtn = document.getElementById("restart-btn");
 
 let salaId, jogador1, jogador2, turno = 'B';
 const tempo = 180;
@@ -14,6 +15,7 @@ let socket = io();
 socket.on("connect", async () => {
     terminarVezBtn.addEventListener("click", () => terminarVez(socket.id));
     desistirBtn.addEventListener("click", () => desistir(socket.id, salaId));
+    restartBtn.addEventListener("click", () => restartJogo(socket.id, salaId));
 
     jogador1 = new Jogador(socket.id, null, tempo, null);
     jogador2 = new Jogador(socket.id, null, tempo, null);
@@ -150,9 +152,21 @@ function terminarVez(socketId) {
 
         atualizarTabuleiro(tabuleiroContainer, res.sala.jogo.tabuleiro);
 
+        if (res.sala.jogoEncerrado) {
+            mostrarPlacar();
+            return;
+        }
+
         movimentos = [];
         turno = res.sala.jogo.turno;
     });
+}
+
+function mostrarPlacar() {
+    terminarVezBtn.classList.add("hidden");
+    desistirBtn.classList.add("hidden");
+    
+    restartBtn.classList.remove("hidden");
 }
 
 function desistir() {

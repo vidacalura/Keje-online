@@ -6,22 +6,22 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="keywords" content="">
+        <meta name="description" content="Jogue Keje em qualquer lugar de forma 100% gratuita!">
+        <meta name="keywords" content="Keje, Board Game, FOSS">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"> </script>
         <script src="https://kit.fontawesome.com/de94e301a2.js" crossorigin="anonymous"> </script> 
         <link rel="stylesheet" type="text/css" href="/CSS/output.css">
         <script src="/JS/local.js" type="module"> </script>
 
-        <title> noname </title>
+        <title> Keje Online </title>
 
     </head>
 
     <body>
 
-        <header>
+        <header class="px-6 py-4">
             <a href="/">
-                <h1> noname </h1>
+                <h1 class="text-xl font-bold"> Keje Online </h1>
             </a>
         </header>
 
@@ -30,9 +30,10 @@
 
             </div>
 
-            <div id="btns-jogo-div">
+            <div id="btns-jogo-div" class="flex justify-center md:block">
                 <button id="terminar-vez-btn"> <i class="fa fa-arrow-right"> </i> </button> <br class="hidden md:block">
                 <button id="desistir-btn"> <i class="fa-regular fa-flag"> </i> </button>
+                <button id="restart-btn" class="hidden">  </button>
             </div>
         </main>
 
