@@ -1,9 +1,10 @@
-
-# noname API
+# Keje Online API
 
 ## Sumário
 
-* []()
+* [Status Codes](#status-codes)
+* [Responses](#responses)
+* [Endpoints](#endpoints)
 
 ## Status Codes
 
@@ -140,6 +141,13 @@ Exemplo:
 }
 ```
 
+Response:
+```javascript
+{
+  "sala": object
+}
+```
+
 #### Fazer um movimento
 
 ```http
@@ -160,7 +168,7 @@ Exemplo:
 ```javascript
 {
   "salaId": 100000,
-  "socketId": "teste",
+  "socketId": "aAbBcCdDeEfFgG",
   "movimentos": [
     {
       "x": 0,
@@ -173,5 +181,88 @@ Exemplo:
       "lado": "B"
     }
   ]
+}
+```
+
+Response:
+```javascript
+{
+  "sala": object
+}
+```
+
+#### Abandonar uma partida
+
+```http
+POST /api/jogo/desistir
+```
+
+Request body:
+
+```javascript
+{
+  "salaId": Number,
+  "socketId": String
+}
+```
+
+Exemplo:
+```javascript
+{
+  "salaId": 100000,
+  "socketId": "aAbBcCdDeEfFgG"
+}
+```
+
+Response:
+```javascript
+{
+  "sala": object
+}
+```
+
+
+#### Reiniciar partida
+
+```http
+POST /api/jogo/restart
+```
+
+Request body:
+
+```javascript
+{
+  "salaId": Number,
+  "socketId": String
+}
+```
+
+Exemplo:
+```javascript
+{
+  "salaId": 100000,
+  "socketId": "aAbBcCdDeEfFgG"
+}
+```
+
+
+#### Deletar sala
+
+```http
+DELETE /api/jogo/salas
+```
+
+Request body:
+
+```javascript
+{
+  "socketId": String
+}
+```
+
+Exemplo:
+```javascript
+{
+  "socketId": "aAbBcCdDeEfFgG"
 }
 ```
