@@ -59,3 +59,17 @@ body {
 .centralizador {
     @apply flex justify-center;
 }
+
+.container-tempo {
+    @apply w-full h-full text-center cursor-pointer border-2 rounded-md shadow-lg transition ease-in-out
+    border-jeek-gray-200 hover:border-blue hover:bg-blue hover:text-jeek-gray-700;
+}
+.container-tempo a {
+    @apply w-full h-full;
+}
+.container-tempo h3 {
+    @apply font-bold text-xl px-4 pt-16;
+}
+.container-tempo p {
+    @apply text-lg;
+}

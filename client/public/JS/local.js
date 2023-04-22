@@ -11,7 +11,7 @@ let endSound = new Audio("../static/lichessCheckmate.mkv");
 endSound.crossOrigin = "anonymous";
 
 let salaId, jogador1, jogador2, turno = 'B';
-const tempo = 180;
+const tempo = getTempoUrl();
 let movimentos = [];
 
 criarTabuleiro(tabuleiroContainer);
@@ -245,6 +245,20 @@ function reiniciarPartida(tabuleiro) {
     restartBtn.classList.add("hidden");
 
     startSound.play();
+}
+
+function getTempoUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tempoParam = urlParams.get("tempo");
+
+    if (tempoParam === "blitz") 
+        return 180;
+    if (tempoParam === "rapid")
+        return 300;
+    if (tempoParam === "classic")
+        return 600;
+
+    return 10000000;
 }
 
 document.addEventListener("keydown", (e) => {
