@@ -1,4 +1,4 @@
-// API Gateway do sistema do jogo
+// API Gateway do sistema do Keje Online
 package main
 
 import (
@@ -26,6 +26,7 @@ func main() {
         AllowHeaders: 	  []string{"*"},
         AllowCredentials: true,
 	}))
+	// r.Use(authMiddleware)
 
 	jogo := r.Group("/api/jogo")
 	{
@@ -34,6 +35,9 @@ func main() {
 		jogo.POST("/salas", jogoHandler)
 		jogo.POST("/salas/entrar", jogoHandler)
 		jogo.POST("/", jogoHandler)
+		jogo.POST("/desistir", jogoHandler)
+		jogo.POST("/restart", jogoHandler)
+		jogo.DELETE("/salas", jogoHandler)
 	}
 
 	users := r.Group("/api/usuarios")
@@ -47,6 +51,10 @@ func main() {
 	}
 
 	r.Run(os.Getenv("APIGateway"))
+}
+
+func authMiddleware(c *gin.Context) {
+
 }
 
 func jogoHandler(c *gin.Context) {
@@ -88,5 +96,5 @@ func redirecionarRequest(reqUrl *url.URL, c *gin.Context) {
 /* TODO
 - Docs
 - DB
-- Tokens
+- authMiddleware
 */

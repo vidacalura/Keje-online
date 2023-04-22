@@ -1,3 +1,5 @@
+// microserviço responsável por toda a lógica e manutenção
+// das salas e jogos do Keje Online
 package main
 
 import (
@@ -61,8 +63,8 @@ func main() {
 		jogo.POST("/salas/entrar", entrarSala)
 		jogo.POST("/", fazerMovimento)
 		jogo.POST("/desistir", desistir)
-		//jogo.POST("/restart", restartJogo)
-		//jogo.DELETE("/salas", fecharSala)
+		jogo.POST("/restart", restartSala)
+		jogo.DELETE("/salas", fecharSala)
 	}
 
 	r.Run(os.Getenv("JogoMS"))
@@ -173,13 +175,10 @@ func fazerMovimento(c *gin.Context) {
 	for i, sala := range salas {
 		if reqBody.SalaId == sala.Id {
 			// Validação de usuário
-			if reqBody.SocketId == sala.Jogadores[0].SocketId {
-				if sala.Jogadores[0].Lado != sala.Jogo.Turno {
-					c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Movimento inválido." })
-					return
-				}
-			} else if reqBody.SocketId == sala.Jogadores[1].SocketId {
-				if sala.Jogadores[1].Lado != sala.Jogo.Turno {
+			if reqBody.SocketId == sala.Jogadores[0].SocketId ||
+				reqBody.SocketId == sala.Jogadores[1].SocketId {
+
+				if reqBody.Movimentos[0].Lado != sala.Jogo.Turno {
 					c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Movimento inválido." })
 					return
 				}
@@ -319,6 +318,31 @@ func countCasas(tabuleiro [5][5]string) int {
 	return countCasas
 }
 
+func restartSala(c *gin.Context) {
+	type ReqBody struct {
+		SalaId     int         `json:"salaId"`
+		SocketId   string      `json:"socketId"`
+	}
+
+	var reqBody ReqBody
+	if err := c.BindJSON(&reqBody); err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
+		return
+	}
+
+	for i, sala := range salas {
+		if reqBody.SalaId == sala.Id {
+			restartJogo(&salas[i])
+
+			c.IndentedJSON(http.StatusOK, gin.H{ "message": "Sala reiniciada com sucesso!" })
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{ "error": "Sala não encontrada." })
+}
+
 func restartJogo(sala *Sala) {
 	if sala.Jogadores[0].Lado == "B" {
 		sala.Jogadores[0].Lado = "P"
@@ -388,11 +412,11 @@ func desistir(c *gin.Context) {
 				salas[i].JogoEncerrado = true
 				salas[i].Jogadores[0].Pontos++
 			} else {
-				c.IndentedJSON(http.StatusNotFound, gin.H{ "error": "Dados insuficientes." })
+				c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados insuficientes." })
 				return
 			}
 
-			c.IndentedJSON(http.StatusNotFound, gin.H{ "sala": salas[i], "message": "Partida encerrada com sucesso!" })
+			c.IndentedJSON(http.StatusOK, gin.H{ "sala": salas[i], "message": "Partida encerrada com sucesso!" })
 			return
 		}
 	}
@@ -400,6 +424,24 @@ func desistir(c *gin.Context) {
 	c.IndentedJSON(http.StatusNotFound, gin.H{ "error": "Sala não encontrada." })
 }
 
-func fecharSala() {
+func fecharSala(c *gin.Context) {
+	var socketId string
+	if err := c.BindJSON(&socketId); err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "socketId inválido." })
+		return
+	}
 
+	for i, sala := range salas {
+		if sala.Jogadores[0].SocketId == socketId ||
+			sala.Jogadores[1].SocketId == socketId {
+			var salaVazia Sala
+			salas[i] = salaVazia
+
+			c.IndentedJSON(http.StatusOK, gin.H{ "message": "Sala fechada com sucesso!" })
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{ "error": "Usuário não encontrado em nenhuma sala." })
 }

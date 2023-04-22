@@ -88,5 +88,53 @@ router.post("/jogo", async (req, res) => {
     });
 });
 
+router.post("/jogo/desistir", (req, res) => {
+    const { salaId, socketId } = req.body;
+
+    if (salaId == null || socketId == null) {
+        res.status(400).json({ "error": "Dados inválidos." });
+        return;
+    }
+    
+    fetch(process.env.API + "/api/jogo/desistir", {
+        method: "POST",
+        headers: {
+            "Content-type": "Application/JSON"
+        },
+        body: JSON.stringify({
+            salaId,
+            socketId
+        })
+    })
+    .then((response) => { return response.json(); })
+    .then((response) => {
+        res.json(response);
+    });
+});
+
+router.post("/jogo/restart", (req, res) => {
+    const { salaId, socketId } = req.body;
+
+    if (salaId == null || socketId == null) {
+        res.status(400).json({ "error": "Dados inválidos." });
+        return;
+    }
+
+    fetch(process.env.API + "/api/jogo/restart", {
+        method: "POST",
+        headers: {
+            "Content-type": "Application/JSON"
+        },
+        body: JSON.stringify({
+            salaId,
+            socketId
+        })
+    })
+    .then((response) => { return response.json(); })
+    .then((response) => {
+        res.json(response);
+    });
+});
+
 
 module.exports = router;

@@ -1,15 +1,21 @@
 import { Jogador, Movimento } from '../jogo.js';
 
-const tabuleiroContainer = document.getElementById("tabuleiro-div");
+let tabuleiroContainer = document.getElementById("tabuleiro-div");
 const terminarVezBtn = document.getElementById("terminar-vez-btn");
 const desistirBtn = document.getElementById("desistir-btn");
 const restartBtn = document.getElementById("restart-btn");
+
+let startSound = new Audio("../static/startSound.mkv");
+startSound.crossOrigin = "anonymous";
+let endSound = new Audio("../static/lichessCheckmate.mkv");
+endSound.crossOrigin = "anonymous";
 
 let salaId, jogador1, jogador2, turno = 'B';
 const tempo = 180;
 let movimentos = [];
 
 criarTabuleiro(tabuleiroContainer);
+
 
 let socket = io();
 socket.on("connect", async () => {
@@ -41,6 +47,8 @@ socket.on("connect", async () => {
 
         entrarSala(jogador1);
         entrarSala(jogador2);
+
+        startSound.play();
     });
 
 });
@@ -153,7 +161,7 @@ function terminarVez(socketId) {
         atualizarTabuleiro(tabuleiroContainer, res.sala.jogo.tabuleiro);
 
         if (res.sala.jogoEncerrado) {
-            mostrarPlacar();
+            encerrarPartida();
             return;
         }
 
@@ -162,13 +170,94 @@ function terminarVez(socketId) {
     });
 }
 
-function mostrarPlacar() {
+function encerrarPartida() {
     terminarVezBtn.classList.add("hidden");
     desistirBtn.classList.add("hidden");
     
     restartBtn.classList.remove("hidden");
+
+    endSound.play();
 }
 
-function desistir() {
+function desistir(socketId) {
+    fetch("/jogo/desistir", {
+        method: "POST",
+        headers: {
+            "Content-type": "Application/JSON"
+        },
+        body: JSON.stringify({
+            salaId,
+            socketId
+        })
+    })
+    .then((res) => { return res.json(); })
+    .then((res) => {
+        if (res.error) {
+            alert(res.error);
+            return;
+        }
 
+        encerrarPartida();
+    });
 }
+
+function restartJogo(socketId, salaId) {
+    fetch("/jogo/restart", {
+        method: "POST",
+        headers: {
+            "Content-type": "Application/JSON"
+        },
+        body: JSON.stringify({
+            salaId,
+            socketId
+        })
+    })
+    .then((res) => { return res.json(); })
+    .then((res) => {
+        if (res.error) {
+            alert(res.error);
+            return;
+        }
+
+        reiniciarPartida(tabuleiroContainer);
+    });
+}
+
+function reiniciarPartida(tabuleiro) {
+    turno = 'B';
+    movimentos = [];
+
+    tabuleiro.remove();
+    tabuleiroContainer = document.createElement("div");
+    tabuleiroContainer.id = "tabuleiro-div";
+
+    criarTabuleiro(tabuleiroContainer);
+
+    const tabuleiroDivContainer = document.getElementById("tabuleiro-div-container");
+    tabuleiroDivContainer.appendChild(tabuleiroContainer);
+
+    jogador1.tempo = tempo;
+    jogador2.tempo = tempo;
+
+    terminarVezBtn.classList.remove("hidden");
+    desistirBtn.classList.remove("hidden");
+
+    restartBtn.classList.add("hidden");
+
+    startSound.play();
+}
+
+document.addEventListener("keydown", (e) => {
+    const key = e.key;
+
+    if (key == 'p' || key == 'P'){
+        terminarVez(socket.id);
+    }
+    else if(key == 'd' || key == 'D'){
+        desistir(socket.id);
+    }
+});
+
+tabuleiroContainer.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+});

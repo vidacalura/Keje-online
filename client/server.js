@@ -15,5 +15,25 @@ app.use(require("./routes/routes"));
 
 let io = socket(server);
 io.on("connection", (socket) => {
-    
+
+    socket.on("disconnect", () => {
+        fecharSala(socket.id);
+    });
 });
+
+
+function fecharSala(socketId) {
+    fetch(process.env.API + "/api/jogo/salas", {
+        method: "DELETE",
+        headers: {
+            "Content-type": "Application/JSON"
+        },
+        body: JSON.stringify({
+            socketId
+        })
+    })
+    .then((response) => { return response.json(); })
+    .then((response) => {
+        // Avisar outros integrantes da sala que jogador saiu
+    });
+}

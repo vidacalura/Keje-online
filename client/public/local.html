@@ -11,29 +11,37 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"> </script>
         <script src="https://kit.fontawesome.com/de94e301a2.js" crossorigin="anonymous"> </script> 
         <link rel="stylesheet" type="text/css" href="/CSS/output.css">
+        <link rel="shortcut icon" href="/static/aberturadomestre.ico" type="image/x-icon">
         <script src="/JS/local.js" type="module"> </script>
 
-        <title> Keje Online </title>
+        <title> Keje Online - Jogo local </title>
 
     </head>
 
     <body>
 
-        <header class="px-6 py-4">
-            <a href="/">
-                <h1 class="text-xl font-bold"> Keje Online </h1>
-            </a>
+        <header class="px-6 py-4 flex justify-between">
+            <div class="flex">
+                <a href="/">
+                    <img src="/static/aberturadomestre.ico" class="rounded-md w-8 h-auto shadow-md" alt="Logo Jeek/Keje Online">
+                </a>
+                <a href="/">
+                    <h2 class="text-jeek-gray-100 font-bold pt-1 pl-4 flex"> Keje Online <p class="text-jeek-gray-200 pl-2"> Beta </p> </h2>
+                </a>
+            </div>
         </header>
 
         <main class="md:flex justify-center pt-12">
-            <div id="tabuleiro-div">
+            <div id="tabuleiro-div-container">
+                <div id="tabuleiro-div">
 
+                </div>
             </div>
 
             <div id="btns-jogo-div" class="flex justify-center md:block">
                 <button id="terminar-vez-btn"> <i class="fa fa-arrow-right"> </i> </button> <br class="hidden md:block">
                 <button id="desistir-btn"> <i class="fa-regular fa-flag"> </i> </button>
-                <button id="restart-btn" class="hidden">  </button>
+                <button id="restart-btn" class="hidden"> <i class="fa fa-arrow-rotate-right"> </i> </button>
             </div>
         </main>
 

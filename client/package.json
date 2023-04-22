@@ -1,18 +1,18 @@
 {
-  "name": "jeek2-client",
+  "name": "keje-client",
   "version": "0.0.1",
-  "description": "",
+  "description": "Client para o Keje Online",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "keywords": [
-    "Jeek",
+    "Keje",
     "Board Game"
   ],
   "author": "vidacalura",
-  "license": "",
+  "license": "GPL-3.0",
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
