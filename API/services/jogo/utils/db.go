@@ -13,9 +13,9 @@ import (
 
 func ConectarBD() { //*sql.DB {
 	// Pega dados de .env
-	err := godotenv.Load("ENV")
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	// Conecta ao banco de dados

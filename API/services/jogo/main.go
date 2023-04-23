@@ -67,7 +67,7 @@ func main() {
 		jogo.DELETE("/salas", fecharSala)
 	}
 
-	r.Run(os.Getenv("JogoMS"))
+	r.Run("0.0.0.0:" + os.Getenv("PORT"))
 }
 
 func getSala(c *gin.Context) {
