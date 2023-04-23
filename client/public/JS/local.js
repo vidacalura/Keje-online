@@ -13,6 +13,7 @@ endSound.crossOrigin = "anonymous";
 let salaId, jogador1, jogador2, turno = 'B';
 const tempo = getTempoUrl();
 let movimentos = [];
+let isGameOver = false;
 
 criarTabuleiro(tabuleiroContainer);
 
@@ -25,6 +26,7 @@ socket.on("connect", async () => {
 
     jogador1 = new Jogador(socket.id, null, tempo, null);
     jogador2 = new Jogador(socket.id, null, tempo, null);
+    (jogador1.lado === "B" ? relogio(jogador1, jogador2) : relogio(jogador2, jogador1));
 
     await fetch("/jogo/criar-sala", {
         method: "POST",
@@ -104,6 +106,9 @@ function criarTabuleiro(tabuleiro) {
 
             casa.addEventListener("click", () => {
                 movimentos.push(new Movimento(i, j, turno));
+
+                if (movimentos.length == 3)
+                    terminarVez(socket.id);
             });
 
             linha.appendChild(casa);
@@ -171,6 +176,8 @@ function terminarVez(socketId) {
 }
 
 function encerrarPartida() {
+    isGameOver = true;
+
     terminarVezBtn.classList.add("hidden");
     desistirBtn.classList.add("hidden");
     
@@ -226,6 +233,7 @@ function restartJogo(socketId, salaId) {
 function reiniciarPartida(tabuleiro) {
     turno = 'B';
     movimentos = [];
+    isGameOver = false;
 
     tabuleiro.remove();
     tabuleiroContainer = document.createElement("div");
@@ -245,6 +253,38 @@ function reiniciarPartida(tabuleiro) {
     restartBtn.classList.add("hidden");
 
     startSound.play();
+}
+
+async function relogio(jogadorBrancas, jogadorPretas) {
+    const relogioBrancas = document.querySelector(".relogio-brancas");
+    const relogioPretas = document.querySelector(".relogio-pretas");
+    relogioBrancas.firstChild.textContent = formatarTempo(jogadorBrancas.tempo);
+    relogioPretas.firstChild.textContent = formatarTempo(jogadorPretas.tempo);
+
+    setInterval(() => {
+        if (!isGameOver) {
+            if (turno === "B") {
+                jogadorBrancas.tempo--;
+                relogioBrancas.firstChild.textContent = formatarTempo(jogadorBrancas.tempo);
+            }
+            else {
+                jogadorPretas.tempo--;
+                relogioPretas.firstChild.textContent = formatarTempo(jogadorPretas.tempo);
+            }
+
+            if (jogadorBrancas.tempo === 0 || jogadorPretas.tempo === 0) {
+                desistir(socket.id);
+            }
+        }
+    }, 1000);
+
+    function formatarTempo(tempoRelogio) {
+        return `${Math.floor(tempoRelogio / 60)}:${(
+            tempoRelogio % 60 >= 10 
+            ? tempoRelogio % 60
+            : "0" + tempoRelogio % 60
+        )}`;
+    }
 }
 
 function getTempoUrl() {

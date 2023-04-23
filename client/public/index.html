@@ -16,6 +16,17 @@
     </head>
 
     <body>
+        <header class="px-6 py-4 flex justify-between absolute z-20">
+            <div class="flex">
+                <a href="/">
+                    <img src="/static/aberturadomestre.ico" class="rounded-md w-8 h-auto shadow-md" alt="Logo Jeek/Keje Online">
+                </a>
+                <a href="/">
+                    <h2 class="text-jeek-gray-100 font-bold pt-1 pl-4 flex"> Keje Online <p class="text-jeek-gray-200 pl-2"> Beta </p> </h2>
+                </a>
+            </div>
+        </header>
+
         <!-- Escolha de tempo -->
         <div id="menu-tempo-container" class="hidden w-screen h-screen top-0 absolute bg-jeek-gray-700 bg-opacity-60 pt-[20vh] z-10"> 
             <!-- Adicionar "centralizador" ao clicar no #menu-tempo-container -->
@@ -37,7 +48,9 @@
             </div>
         </div>
 
-
+        <main>
+            <button id="menu-local-btn"> Jogo local </button>
+        </main>
     </body>
 
 </html>

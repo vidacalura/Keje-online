@@ -26,7 +26,7 @@ func main() {
         AllowHeaders: 	  []string{"*"},
         AllowCredentials: true,
 	}))
-	// r.Use(authMiddleware)
+	r.Use(authMiddleware)
 
 	jogo := r.Group("/api/jogo")
 	{
@@ -54,7 +54,9 @@ func main() {
 }
 
 func authMiddleware(c *gin.Context) {
+	// Checar token em headers
 
+	c.Next()
 }
 
 func jogoHandler(c *gin.Context) {
@@ -92,9 +94,3 @@ func redirecionarRequest(reqUrl *url.URL, c *gin.Context) {
 	proxy := httputil.NewSingleHostReverseProxy(reqUrl)
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
-
-/* TODO
-- Docs
-- DB
-- authMiddleware
-*/

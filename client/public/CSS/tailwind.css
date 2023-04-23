@@ -28,7 +28,7 @@ body {
     @apply rounded-br-[20px];
 }
 #btns-jogo-div {
-    @apply gap-4 pt-6 md:pt-[24vh] md:pl-[10vw];
+    @apply gap-4 pt-6;
 }
 #btns-jogo-div button {
     @apply w-16 md:w-28 p-3 py-4 md:p-4 rounded-full mb-4 text-xl text-white font-bold;
@@ -41,6 +41,18 @@ body {
 }
 #restart-btn {
     @apply bg-jeek-gray-500;
+}
+
+.relogio-brancas,
+.relogio-pretas {
+    @apply w-40 rounded-full text-3xl font-bold 
+    p-4 border-4 text-center mb-4;
+}
+.relogio-brancas {
+    @apply bg-white text-jeek-gray-600 border-white;
+}
+.relogio-pretas {
+    @apply border-white text-white;
 }
 
 .peca-preta,

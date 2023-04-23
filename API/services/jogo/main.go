@@ -108,14 +108,13 @@ func criarSala(c *gin.Context) {
 }
 
 func entrarSala(c *gin.Context) {
-	type ReqBody struct {
+	var reqBody struct {
 		SalaId   int    `json:"salaId"`
 		SocketId string `json:"socketId"`
 		Username string `json:"username"`
 		Tempo    int    `json:"tempo"`
 	}
 
-	var reqBody ReqBody
 	if err := c.BindJSON(&reqBody); err != nil {
 		log.Println(err)
 		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
@@ -159,15 +158,20 @@ func entrarSala(c *gin.Context) {
 }
 
 func fazerMovimento(c *gin.Context) {
-	type ReqBody struct {
+	var reqBody struct {
 		SalaId     int         `json:"salaId"`
 		SocketId   string      `json:"socketId"`
 		Movimentos []Movimento `json:"movimentos"`
 	}
 
-	var reqBody ReqBody
 	if err := c.BindJSON(&reqBody); err != nil {
 		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
+		return
+	}
+
+	if len(reqBody.Movimentos) == 0 || 
+		reqBody.SocketId == "" || reqBody.SalaId == 0 {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
 		return
 	}
@@ -319,12 +323,11 @@ func countCasas(tabuleiro [5][5]string) int {
 }
 
 func restartSala(c *gin.Context) {
-	type ReqBody struct {
+	var reqBody struct {
 		SalaId     int         `json:"salaId"`
 		SocketId   string      `json:"socketId"`
 	}
 
-	var reqBody ReqBody
 	if err := c.BindJSON(&reqBody); err != nil {
 		log.Println(err)
 		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
@@ -333,6 +336,12 @@ func restartSala(c *gin.Context) {
 
 	for i, sala := range salas {
 		if reqBody.SalaId == sala.Id {
+			if reqBody.SocketId != sala.Jogadores[0].SocketId &&
+				reqBody.SocketId != sala.Jogadores[1].SocketId {
+				c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Você não tem permissão para reiniciar esta sala." })
+				return
+			}
+
 			restartJogo(&salas[i])
 
 			c.IndentedJSON(http.StatusOK, gin.H{ "message": "Sala reiniciada com sucesso!" })
@@ -391,12 +400,11 @@ func sortearLado() string {
 }
 
 func desistir(c *gin.Context) {
-	type ReqBody struct {
+	var reqBody struct {
 		SalaId   int    `json:"salaId"`
 		SocketId string `json:"socketId"`
 	}
 
-	var reqBody ReqBody
 	if err := c.BindJSON(&reqBody); err != nil {
 		log.Println(err)
 		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "Dados inválidos." })
@@ -425,13 +433,17 @@ func desistir(c *gin.Context) {
 }
 
 func fecharSala(c *gin.Context) {
-	var socketId string
-	if err := c.BindJSON(&socketId); err != nil {
+	var reqBody struct {
+		SocketId string `json:"socketId"`
+	}
+
+	if err := c.BindJSON(&reqBody); err != nil {
 		log.Println(err)
 		c.IndentedJSON(http.StatusBadRequest, gin.H{ "error": "socketId inválido." })
 		return
 	}
 
+	socketId := reqBody.SocketId 
 	for i, sala := range salas {
 		if sala.Jogadores[0].SocketId == socketId ||
 			sala.Jogadores[1].SocketId == socketId {
