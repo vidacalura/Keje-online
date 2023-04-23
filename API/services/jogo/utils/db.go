@@ -13,7 +13,7 @@ import (
 
 func ConectarBD() { //*sql.DB {
 	// Pega dados de .env
-	err := godotenv.Load()
+	err := godotenv.Load("ENV")
 	if err != nil {
 		log.Fatal(err)
 	}
