@@ -16,7 +16,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	r := gin.Default()
@@ -50,7 +50,7 @@ func main() {
 		auth.GET("/ping", authHandler)
 	}
 
-	r.Run(os.Getenv("APIGateway"))
+	r.Run("0.0.0.0:" + os.Getenv("PORT"))
 }
 
 func authMiddleware(c *gin.Context) {
