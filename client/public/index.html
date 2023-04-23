@@ -10,13 +10,15 @@
         <meta name="keywords" content="Keje, Board Game, FOSS">
         <link rel="shortcut icon" href="/static/aberturadomestre.ico" type="image/x-icon">
         <link rel="stylesheet" type="text/css" href="/CSS/output.css">
+        <script src="https://kit.fontawesome.com/de94e301a2.js" crossorigin="anonymous"> </script>
+        <script src="/JS/index.js" defer></script>
 
         <title> Keje Online </title>
 
     </head>
 
-    <body>
-        <header class="px-6 py-4 flex justify-between absolute z-20">
+    <body class="md:overflow-hidden">
+        <header class="px-6 py-4 flex justify-between">
             <div class="flex">
                 <a href="/">
                     <img src="/static/aberturadomestre.ico" class="rounded-md w-8 h-auto shadow-md" alt="Logo Jeek/Keje Online">
@@ -48,9 +50,37 @@
             </div>
         </div>
 
-        <main>
-            <button id="menu-local-btn"> Jogo local </button>
+        <main class="md:flex pt-12">
+            <div class="md:w-[50vw] px-12 sm:px-20 pb-12 md:pt-20 text-center">
+                <h1 class="font-bold text-6xl text-white menu-title"> Keje Online </h1>
+                <p class="py-10 text-lg text-white">
+                    Ainda mais profundo e desafiador
+                </p>
+
+                <!-- Botões -->
+                <div id="menu-btns" class="flex justify-center gap-2 sm:gap-6">
+                    <button id="btn-jogar-local" class="p-3 py-4 rounded-full border-2 border-white w-40 text-xl text-white font-bold shadow-md transition-all hover:shadow-lg hover:scale-110"> Jogo local </button>
+                    <button class="btn-jogar-online sm:mt-0 mt-2 p-3 py-4 rounded-full bg-white text-jeek-gray-600 w-40 text-xl font-bold shadow-md transition-all hover:shadow-lg hover:scale-110">
+                        Jogar online <br> 
+                        <p class="text-sm font-light"> (Em breve) </p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabuleiro -->
+            <div id="tabuleiro-div-container" class="md:w-[50vw] flex justify-center pr-[5vw]">
+                <div id="tabuleiro-div" class="shadow-lg">
+
+                </div>
+            </div>
         </main>
     </body>
+
+    <footer class="md:absolute md:bottom-0 m-2 mx-4 text-jeek-gray-300 text-sm cursor-pointer transition-all hover:text-white">
+        <a href="https://github.com/vidacalura/Keje-online" class="flex" target="_blank">
+            <i class="fa-brands fa-github"> </i>
+            <p class="pl-1"> Keje online </p>
+        </a>
+    </footer>
 
 </html>
