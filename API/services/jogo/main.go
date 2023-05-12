@@ -259,6 +259,8 @@ func isConnected(movimento []Movimento, tabuleiro [5][5]string) bool {
 
 	// Verifica lance espelhado
 
+	// Verifica primeiro lance na borda
+
 	// Verifica se casa já foi preenchida
 	for _, m := range movimento {
 		if tabuleiro[m.Y][m.X] != "" {

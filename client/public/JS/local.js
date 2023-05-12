@@ -12,7 +12,7 @@ endSound.crossOrigin = "anonymous";
 
 let salaId, jogador1, jogador2, turno = 'B';
 const tempo = getTempoUrl();
-let movimentos = [];
+let movimentos = [], movimentosTemp = [];
 let isGameOver = false;
 
 criarTabuleiro(tabuleiroContainer);
@@ -105,6 +105,18 @@ function criarTabuleiro(tabuleiro) {
             casa.x = j;
 
             casa.addEventListener("click", () => {
+                if (!casa.hasChildNodes()) {
+                    movimentosTemp.push(casa);
+
+                    const peca = document.createElement("div");
+                    (turno === 'B'
+                        ? peca.classList.add("peca-branca")
+                        : peca.classList.add("peca-preta")
+                    );
+
+                    casa.appendChild(peca);
+                }
+
                 movimentos.push(new Movimento(i, j, turno));
 
                 if (movimentos.length == 3)
@@ -159,7 +171,12 @@ function terminarVez(socketId) {
     .then((res) => { return res.json(); })
     .then((res) => {
         if (res.error) {
+            for (const m of movimentosTemp) {
+                m.firstChild.remove();
+            }
+
             movimentos = [];
+            movimentosTemp = [];
             return;
         }
 
@@ -171,6 +188,7 @@ function terminarVez(socketId) {
         }
 
         movimentos = [];
+        movimentosTemp = [];
         turno = res.sala.jogo.turno;
     });
 }
